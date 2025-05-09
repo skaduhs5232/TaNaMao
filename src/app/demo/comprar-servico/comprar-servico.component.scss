@@ -105,8 +105,13 @@
           grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
         }
 
-        gap: 16px;
-        margin-bottom: 24px;
+        & {
+          gap: 16px;
+        }
+        
+        & {
+          margin-bottom: 24px;
+        }
 
         .detail-item {
           display: flex;
@@ -151,7 +156,9 @@
             grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
           }
 
-          gap: 16px;
+          & {
+            gap: 16px;
+          }
 
           .portfolio-item {
             aspect-ratio: 1;
@@ -183,7 +190,9 @@
           grid-template-columns: 1fr 1fr;
         }
 
-        gap: 16px;
+        & {
+          gap: 16px;
+        }
       }
 
       .full-width {
