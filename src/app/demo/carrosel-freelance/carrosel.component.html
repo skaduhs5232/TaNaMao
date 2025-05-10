@@ -1,5 +1,5 @@
 <div class="freelancer-carousel">
-  <h2 class="carousel-title" *ngIf="title">{{ title }}</h2>
+  
   
   <div class="carousel-container">
     <button class="nav-button prev" (click)="prevSlide()" [disabled]="currentIndex === 0" 
@@ -10,10 +10,9 @@
     <div class="carousel-track" #carouselTrack>
       <div class="carousel-slides" 
            [style.transform]="'translateX(' + (currentIndex * -100 / visibleSlides) + '%)'"
-           [style.transition]="isAnimating ? 'transform 0.5s ease' : 'none'">
-        <div *ngFor="let freelancer of freelancers" class="carousel-slide" 
+           [style.transition]="isAnimating ? 'transform 0.5s ease' : 'none'">        <div *ngFor="let freelancer of freelancers" class="carousel-slide" 
              [@slideAnimation]="animationState" (@slideAnimation.done)="onAnimationDone()">
-          <mat-card class="freelancer-card" [class.highlight]="freelancer.destaque">
+          <mat-card class="freelancer-card" [class.highlight]="freelancer.destaque" [@cardAnimation]>
             <div class="card-header">
               <img [src]="freelancer.fotoPerfil" [alt]="freelancer.nome" class="freelancer-image">
               <div *ngIf="freelancer.desconto" class="discount-badge">
@@ -26,7 +25,12 @@
             </div>
             
             <mat-card-content>
-              <div class="category-chip">{{ freelancer.categoria }}</div>
+              <div class="category-chip">
+                {{ freelancer.categoria }}
+                <span class="nivel-badge" [ngClass]="'nivel-' + (freelancer.nivel === 'Expert' ? 'expert' : freelancer.nivel === 'Intermediário' ? 'intermediario' : 'iniciante')">
+                  {{ freelancer.nivel }}
+                </span>
+              </div>
               
               <div class="freelancer-info">
                 <h3 class="freelancer-name">{{ freelancer.nome }}</h3>
@@ -39,12 +43,14 @@
               <h2 class="service-title">{{ freelancer.titulo }}</h2>
               
               <p class="service-description">{{ freelancer.descricao | truncate:120 }}</p>
-              
-              <div class="skills-section">
+                  <div class="skills-section">
                 <h4>Habilidades</h4>
                 <div class="skills-list">
                   <div *ngFor="let skill of freelancer.habilidades.slice(0,3)" class="skill-item">
-                    <span class="skill-name">{{ skill.nome }}</span>
+                    <span class="skill-name">
+                      {{ skill.nome }}
+                      <span class="skill-level">{{ skill.nivel * 20 }}%</span>
+                    </span>
                     <div class="skill-bar">
                       <div class="skill-progress" [style.width.%]="skill.nivel * 20" 
                            [ngClass]="'nivel-' + skill.nivel"></div>

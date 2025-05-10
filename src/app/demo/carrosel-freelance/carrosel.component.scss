@@ -1,13 +1,27 @@
 .freelancer-carousel {
-  margin: 2rem 0;
+  margin: 2.5rem 0;
   position: relative;
   
   .carousel-title {
-    font-size: 1.75rem;
-    font-weight: 500;
-    margin-bottom: 1.5rem;
-    color: #333;
+    font-size: 2rem;
+    font-weight: 600;
+    margin-bottom: 2rem;
+    color: #1E293B;
     text-align: center;
+    position: relative;
+    padding-bottom: 0.75rem;
+    
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 5rem;
+      height: 4px;
+      background: linear-gradient(to right, #1976D2, #64B5F6);
+      border-radius: 2px;
+    }
   }
 
   .carousel-container {
@@ -37,24 +51,37 @@
     box-sizing: border-box;
     transition: transform 0.3s ease, opacity 0.3s ease;
   }
-
   .freelancer-card {
     height: 100%;
     display: flex;
     flex-direction: column;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+    transition: transform 0.4s ease, box-shadow 0.4s ease;
     overflow: hidden;
+    background-color: #FFFFFF;
+    position: relative;
+    border: 1px solid rgba(0, 0, 0, 0.05);
     
     &:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+      transform: translateY(-8px);
+      box-shadow: 0 15px 30px rgba(25, 118, 210, 0.15);
     }
     
     &.highlight {
-      border: 2px solid #FFC107;
-      box-shadow: 0 4px 12px rgba(255, 193, 7, 0.3);
+      border: none;
+      box-shadow: 0 10px 25px rgba(255, 193, 7, 0.2);
+      
+      &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(to right, #FFC107, #FFD54F);
+        z-index: 1;
+      }
     }
   }
 
@@ -74,40 +101,51 @@
       transform: scale(1.05);
     }
   }
-
   .discount-badge {
     position: absolute;
     top: 12px;
     right: 12px;
-    background-color: #E53935;
+    background: linear-gradient(135deg, #E53935, #FF5252);
     color: white;
-    padding: 4px 8px;
-    border-radius: 4px;
+    padding: 6px 10px;
+    border-radius: 20px;
     font-size: 0.875rem;
-    font-weight: 500;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    font-weight: 600;
+    box-shadow: 0 4px 8px rgba(229, 57, 53, 0.3);
     animation: pulse 2s infinite;
+    z-index: 1;
   }
   
   .featured-badge {
     position: absolute;
     top: 12px;
     left: 12px;
-    background-color: #FFC107;
-    color: #333;
-    padding: 4px 8px;
-    border-radius: 4px;
-    font-size: 0.75rem;
-    font-weight: 500;
+    background: linear-gradient(135deg, #FFC107, #FFCA28);
+    color: #212121;
+    padding: 6px 10px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
     display: flex;
     align-items: center;
     gap: 4px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 8px rgba(255, 193, 7, 0.3);
+    z-index: 1;
     
     mat-icon {
       font-size: 16px;
       width: 16px;
       height: 16px;
+      animation: rotate 3s ease-in-out infinite;
+    }
+    
+    @keyframes rotate {
+      0% { transform: rotate(0deg); }
+      15% { transform: rotate(20deg); }
+      30% { transform: rotate(0deg); }
+      45% { transform: rotate(-20deg); }
+      60% { transform: rotate(0deg); }
+      100% { transform: rotate(0deg); }
     }
   }
 
@@ -118,16 +156,38 @@
     flex-direction: column;
     gap: 12px;
   }
-
   .category-chip {
-    display: inline-block;
+    display: flex;
+    align-items: center;
+    gap: 8px;
     background-color: #E8F5E9;
     color: #2E7D32;
-    padding: 2px 8px;
-    border-radius: 16px;
-    font-size: 0.75rem;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
     font-weight: 500;
     align-self: flex-start;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    
+    .nivel-badge {
+      background-color: rgba(255, 255, 255, 0.7);
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      
+      &.nivel-expert {
+        color: #D84315;
+      }
+      
+      &.nivel-intermediario {
+        color: #F57F17;
+      }
+      
+      &.nivel-iniciante {
+        color: #0288D1;
+      }
+    }
   }
 
   .freelancer-info {
@@ -169,7 +229,6 @@
     color: #333;
     line-height: 1.3;
   }
-
   .service-description {
     margin: 0;
     color: #666;
@@ -178,59 +237,96 @@
     overflow: hidden;
     text-overflow: ellipsis;
     display: -webkit-box;
+    line-clamp: 3;
     -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
   }
-
   .skills-section {
+    margin-top: 0.5rem;
+    
     h4 {
       font-size: 0.9rem;
-      margin: 0 0 8px;
-      color: #555;
+      margin: 0 0 10px;
+      color: #455a64;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      
+      &::before {
+        content: '';
+        display: inline-block;
+        width: 4px;
+        height: 14px;
+        background-color: #1976D2;
+        margin-right: 8px;
+        border-radius: 2px;
+      }
     }
     
     .skills-list {
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 12px;
     }
     
     .skill-item {
       display: flex;
       flex-direction: column;
-      gap: 2px;
+      gap: 4px;
     }
     
     .skill-name {
-      font-size: 0.8rem;
-      color: #555;
+      font-size: 0.85rem;
+      color: #546E7A;
+      font-weight: 500;
+      display: flex;
+      justify-content: space-between;
+      
+      .skill-level {
+        font-size: 0.75rem;
+        color: #78909C;
+      }
     }
     
     .skill-bar {
-      height: 4px;
+      height: 6px;
       background-color: #ECEFF1;
-      border-radius: 2px;
+      border-radius: 3px;
       overflow: hidden;
+      position: relative;
     }
     
     .skill-progress {
       height: 100%;
-      border-radius: 2px;
+      border-radius: 3px;
       background-color: #2196F3;
+      position: relative;
+      transition: width 0.8s cubic-bezier(0.17, 0.67, 0.83, 0.67);
       
-      &.nivel-5 { background-color: #4CAF50; }
-      &.nivel-4 { background-color: #8BC34A; }
-      &.nivel-3 { background-color: #FFC107; }
-      &.nivel-2 { background-color: #FF9800; }
-      &.nivel-1 { background-color: #FF5722; }
+      &.nivel-5 { 
+        background: linear-gradient(to right, #43A047, #66BB6A); 
+      }
+      &.nivel-4 { 
+        background: linear-gradient(to right, #7CB342, #9CCC65); 
+      }
+      &.nivel-3 { 
+        background: linear-gradient(to right, #FFA000, #FFB74D); 
+      }
+      &.nivel-2 { 
+        background: linear-gradient(to right, #F57C00, #FFA726); 
+      }
+      &.nivel-1 { 
+        background: linear-gradient(to right, #E64A19, #FF8A65); 
+      }
     }
   }
-
   .card-footer {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-top: auto;
+    padding-top: 1rem;
+    border-top: 1px dashed rgba(0, 0, 0, 0.08);
   }
 
   .price-section {
@@ -245,19 +341,33 @@
     
     .current-price {
       font-size: 1.25rem;
-      font-weight: 600;
-      color: #1E88E5;
+      font-weight: 700;
+      color: #1976D2;
+      position: relative;
     }
     
     .original-price {
       font-size: 0.875rem;
       text-decoration: line-through;
-      color: #999;
+      color: #9E9E9E;
+      position: relative;
+      
+      &::after {
+        content: '';
+        position: absolute;
+        width: 110%;
+        height: 1px;
+        background-color: #E53935;
+        left: -5%;
+        top: 50%;
+        transform: rotate(-8deg);
+      }
     }
     
     .rate-text {
       font-size: 0.75rem;
-      color: #666;
+      color: #78909C;
+      font-weight: 500;
     }
   }
 
@@ -275,105 +385,135 @@
       color: #4CAF50;
     }
   }
-
   .card-actions {
     padding: 16px;
     display: flex;
-    gap: 8px;
+    gap: 10px;
     border-top: 1px solid #ECEFF1;
+    background-color: #FAFAFA;
     
     button {
       flex: 1;
       font-size: 0.875rem;
+      border-radius: 8px;
+      padding: 8px 16px;
+      font-weight: 500;
+      letter-spacing: 0.4px;
+      transition: all 0.3s ease;
       
       mat-icon {
         font-size: 18px;
         width: 18px;
         height: 18px;
-        margin-right: 4px;
+        margin-right: 6px;
+        transition: transform 0.3s ease;
+      }
+      
+      &:active {
+        transform: scale(0.98);
       }
     }
     
     .hire-button {
       background-color: #1976D2;
+      box-shadow: 0 2px 10px rgba(25, 118, 210, 0.2);
       
       &:hover {
         background-color: #1565C0;
+        box-shadow: 0 4px 15px rgba(25, 118, 210, 0.3);
+        
+        mat-icon {
+          transform: translateY(-2px);
+        }
       }
     }
     
     .view-button {
-      border-color: #1976D2;
+      border: 1px solid #1976D2;
+      color: #1976D2;
       
       &:hover {
-        background-color: rgba(25, 118, 210, 0.04);
+        background-color: rgba(25, 118, 210, 0.08);
+        
+        mat-icon {
+          transform: translateX(-2px);
+        }
       }
     }
   }
-
   .nav-button {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
     z-index: 2;
-    width: 40px;
-    height: 40px;
+    width: 48px;
+    height: 48px;
     display: flex;
     align-items: center;
     justify-content: center;
     border-radius: 50%;
     background-color: white;
     border: none;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
     cursor: pointer;
     transition: all 0.3s ease;
+    outline: none;
 
     &:hover:not(:disabled) {
-      background-color: #f5f5f5;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      background-color: #1976D2;
+      box-shadow: 0 6px 15px rgba(25, 118, 210, 0.25);
+      
+      mat-icon {
+        color: white;
+      }
     }
 
     &:disabled {
-      opacity: 0.5;
+      opacity: 0.4;
       cursor: not-allowed;
     }
 
     &.prev {
-      left: 8px;
+      left: 15px;
     }
 
     &.next {
-      right: 8px;
+      right: 15px;
     }
     
     mat-icon {
-      color: #333;
+      color: #1976D2;
+      transition: color 0.3s ease;
     }
   }
 
   .carousel-indicators {
     display: flex;
     justify-content: center;
-    gap: 8px;
-    margin-top: 16px;
+    gap: 10px;
+    margin-top: 24px;
     
     .indicator-dot {
-      width: 10px;
-      height: 10px;
+      width: 12px;
+      height: 12px;
       border-radius: 50%;
-      background-color: #BDBDBD;
+      background-color: #CFD8DC;
       border: none;
       padding: 0;
       cursor: pointer;
       transition: all 0.3s ease;
+      outline: none;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
       
       &.active {
         background-color: #1976D2;
-        transform: scale(1.2);
+        transform: scale(1.3);
+        box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.2);
       }
       
       &:hover:not(.active) {
-        background-color: #9E9E9E;
+        background-color: #90A4AE;
+        transform: scale(1.1);
       }
     }
   }

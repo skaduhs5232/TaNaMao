@@ -1,3 +1,4 @@
+// filepath: c:\faculdade\TaNaMao\src\app\demo\carrosel-freelance\carrosel.freelance.component.ts
 import { Component, Input, ViewChild, ElementRef, OnInit, AfterViewInit, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
@@ -7,11 +8,9 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatBadgeModule } from '@angular/material/badge';
 import { Router } from '@angular/router';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { ServiceDetailsComponent } from '../catalogo-servicos/service-details/service-details.component';
 import { Colaborador } from 'src/app/core/interfaces/colaborador';
-import { Servico } from 'src/app/core/interfaces/padroes';
-import { trigger, transition, style, animate, state } from '@angular/animations';
 import { TruncatePipe } from './trincate.pipe';
+import { trigger, transition, style, animate, state } from '@angular/animations';
 
 @Component({
   selector: 'app-freelancer-carousel',
@@ -32,16 +31,22 @@ import { TruncatePipe } from './trincate.pipe';
     trigger('slideAnimation', [
       transition(':enter', [
         style({ transform: 'translateX(100%)', opacity: 0 }),
-        animate('300ms ease-out', style({ transform: 'translateX(0)', opacity: 1 }))
+        animate('400ms cubic-bezier(0.35, 0, 0.25, 1)', style({ transform: 'translateX(0)', opacity: 1 }))
       ]),
       transition(':leave', [
-        animate('300ms ease-in', style({ transform: 'translateX(-100%)', opacity: 0 }))
+        animate('400ms cubic-bezier(0.35, 0, 0.25, 1)', style({ transform: 'translateX(-100%)', opacity: 0 }))
       ])
     ]),
     trigger('fadeInOut', [
-      state('visible', style({ opacity: 1 })),
-      state('hidden', style({ opacity: 0.5 })),
-      transition('hidden <=> visible', animate('200ms ease-in-out'))
+      state('visible', style({ opacity: 1, transform: 'scale(1)' })),
+      state('hidden', style({ opacity: 0.5, transform: 'scale(0.95)' })),
+      transition('hidden <=> visible', animate('250ms cubic-bezier(0.35, 0, 0.25, 1)'))
+    ]),
+    trigger('cardAnimation', [
+      transition(':enter', [
+        style({ opacity: 0, transform: 'translateY(20px)' }),
+        animate('600ms ease-out', style({ opacity: 1, transform: 'translateY(0)' }))
+      ])
     ])
   ]
 })
@@ -55,7 +60,6 @@ export class FreelancerCarouselComponent implements OnInit, AfterViewInit {
   isAnimating = false;
   touchStartX = 0;
   touchEndX = 0;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   autoplayInterval: any = null;
   currentPage = 0;
 
@@ -222,6 +226,21 @@ export class FreelancerCarouselComponent implements OnInit, AfterViewInit {
     indices.forEach(index => {
       if (this.freelancers[index]) {
         this.freelancers[index].destaque = true;
+        
+        // Se já não tiver desconto, aplicar um desconto especial de destaque
+        if (!this.freelancers[index].desconto) {
+          this.freelancers[index].desconto = 15;
+          // Calcular o valor original baseado no desconto
+          const valorAtual = this.freelancers[index].valorHora;
+          this.freelancers[index].valorOriginal = Math.round(valorAtual / (1 - 0.15));
+        } else {
+          // Aumentar o desconto existente
+          this.freelancers[index].desconto += 5;
+          // Recalcular o valor original
+          const valorAtual = this.freelancers[index].valorHora;
+          const descontoAtual = this.freelancers[index].desconto / 100;
+          this.freelancers[index].valorOriginal = Math.round(valorAtual / (1 - descontoAtual));
+        }
       }
     });
   }
@@ -269,11 +288,9 @@ export class FreelancerCarouselComponent implements OnInit, AfterViewInit {
   goToPage(index: number) {
     if (!this.isAnimating) {
       this.isAnimating = true;
+      this.animationState = 'out';
       this.currentIndex = index;
       this.currentPage = index;
-      setTimeout(() => {
-        this.isAnimating = false;
-      }, 500);
     }
   }
   
@@ -301,9 +318,9 @@ export class FreelancerCarouselComponent implements OnInit, AfterViewInit {
   
   isButtonVisible(button: string): string {
     if (button === 'prev') {
-      return this.currentIndex === 0 ? 'hidden' : 'visible';
+      return this.currentIndex > 0 ? 'visible' : 'hidden';
     } else {
-      return this.currentIndex >= this.freelancers.length - this.visibleSlides ? 'hidden' : 'visible';
+      return this.currentIndex < this.freelancers.length - this.visibleSlides ? 'visible' : 'hidden';
     }
   }
 
@@ -322,8 +339,7 @@ export class FreelancerCarouselComponent implements OnInit, AfterViewInit {
 
   handleSwipe() {
     const diff = this.touchStartX - this.touchEndX;
-    const threshold = 50; // Mínimo de pixels para considerar como swipe
-    
+    const threshold = 50;
     if (diff > threshold) {
       this.nextSlide();
     } else if (diff < -threshold) {
@@ -332,51 +348,10 @@ export class FreelancerCarouselComponent implements OnInit, AfterViewInit {
   }
   
   viewProfile(profile: Colaborador) {
-    this.stopAutoplay();
-    const serviceData: Servico = {
-      id: profile.id,
-      titulo: profile.titulo,
-      fotoColaborador: profile.fotoPerfil,
-      nomeColaborador: profile.nome,
-      categoria: profile.categoria,
-      preco: profile.valorHora,
-      avaliacao: profile.avaliacao,
-      totalAvaliacoes: profile.totalAvaliacoes || profile.projetosCompletos,
-      descricao: profile.descricao,
-      tempoEntrega: profile.tempoEntrega || 1,
-      nivel: profile.nivel,
-      tags: profile.habilidades.map(h => h.nome)
-    };
-
-    this.dialog.open(ServiceDetailsComponent, {
-      data: serviceData,
-      width: '800px',
-      maxWidth: '95vw',
-      panelClass: 'service-details-dialog'
-    }).afterClosed().subscribe(() => {
-      this.startAutoplay();
-    });
+    this.router.navigate(['/freelancer', profile.id]);
   }
 
   hireFreelancer(profile: Colaborador) {
-    this.stopAutoplay();
-    const serviceData: Servico = {
-      id: profile.id,
-      titulo: profile.titulo,
-      fotoColaborador: profile.fotoPerfil,
-      nomeColaborador: profile.nome,
-      categoria: profile.categoria,
-      preco: profile.valorHora,
-      avaliacao: profile.avaliacao,
-      totalAvaliacoes: profile.totalAvaliacoes || profile.projetosCompletos,
-      descricao: profile.descricao,
-      tempoEntrega: profile.tempoEntrega || 1,
-      nivel: profile.nivel,
-      tags: profile.habilidades.map(h => h.nome)
-    };
-
-    this.router.navigate(['/contrato', profile.id], {
-      state: { serviceData }
-    });
+    this.router.navigate(['/contratar', profile.id]);
   }
 }
