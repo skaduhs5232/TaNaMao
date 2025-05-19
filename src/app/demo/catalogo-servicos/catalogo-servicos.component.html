@@ -1,132 +1,169 @@
-<app-card [cardTitle]="'Escolha o seu ' + selectedCategory + '(a)'">
-  <div class="catalog-container">
-    <div class="catalog-content">
-      <!-- Filtros Colapsáveis -->
-      <aside class="filters-sidebar" [class.collapsed]="isFilterCollapsed">
-        <div class="filter-header">
-          @if(!isFilterCollapsed){
-          <h3>Filtros</h3>
-          }
-          <!-- <button mat-icon-button (click)="toggleFilters()">
-            <mat-icon>{{ isFilterCollapsed ? 'chevron_right' : 'chevron_left' }}</mat-icon>
-          </button> -->
-        </div>
+<div class="catalog-modern">
+  <!-- Header com título e barra de busca rápida -->
+  <div class="catalog-header">
+    <div class="header-content">
+      <h1 class="catalog-title">Serviços de <span>{{ selectedCategory }}</span></h1>
+      <div class="search-container">
+        <mat-form-field appearance="outline" class="search-field">
+          <mat-label>O que você procura?</mat-label>
+          <input matInput [(ngModel)]="searchQuery" (input)="applyFilters()" placeholder="Ex: Pintura, Instalação...">
+          <mat-icon matSuffix>search</mat-icon>
+        </mat-form-field>
+      </div>
+    </div>
+  </div>
 
-        <div class="filter-content" [class.hidden]="isFilterCollapsed">
-          <div class="search-box">
-            <mat-form-field appearance="outline" class="w-100">
-              <mat-label>Buscar serviços</mat-label>
-              <input matInput [(ngModel)]="searchQuery" (input)="applyFilters()">
-              <mat-icon matSuffix>search</mat-icon>
+  <!-- Filtros interativos em linha -->
+  <div class="interactive-filters-bar">
+    <div class="filter-chips-wrapper">
+      <div class="filter-category">
+        <button mat-button class="filter-toggle" (click)="toggleShowAllFilters()">
+          <mat-icon>filter_list</mat-icon>
+          <span>Filtros</span>
+          <mat-icon class="toggle-icon">{{ showAllFilters ? 'expand_less' : 'expand_more' }}</mat-icon>
+        </button>
+      </div>
+
+      <!-- Chips horizontais para filtros rápidos -->
+      <div class="chip-scroll-container">
+        <mat-chip-set class="filter-chips">          <!-- Nível -->
+          <mat-chip *ngFor="let option of nivelOptions" 
+            [class.selected]="isFilterSelected('Nível', option)"
+            (click)="toggleFilter('Nível', option)"
+            (keydown.enter)="toggleFilter('Nível', option)"
+            (keydown.space)="toggleFilter('Nível', option)"
+            tabindex="0"
+            role="button"
+            [attr.aria-pressed]="isFilterSelected('Nível', option)">
+            {{ option }}
+          </mat-chip>
+          <!-- Tempo de Entrega -->
+          <mat-chip *ngFor="let option of tempoEntregaOptions" 
+            [class.selected]="isFilterSelected('Tempo de Entrega', option)"
+            (click)="toggleFilter('Tempo de Entrega', option)"
+            (keydown.enter)="toggleFilter('Tempo de Entrega', option)"
+            (keydown.space)="toggleFilter('Tempo de Entrega', option)"
+            tabindex="0"
+            role="button"
+            [attr.aria-pressed]="isFilterSelected('Tempo de Entrega', option)">
+            {{ option }}
+          </mat-chip>
+          <!-- Avaliação -->
+          <mat-chip *ngFor="let option of avaliacaoOptions" 
+            [class.selected]="isFilterSelected('Avaliação', option)"
+            (click)="toggleFilter('Avaliação', option)"
+            (keydown.enter)="toggleFilter('Avaliação', option)"
+            (keydown.space)="toggleFilter('Avaliação', option)"
+            tabindex="0"
+            role="button"
+            [attr.aria-pressed]="isFilterSelected('Avaliação', option)">
+            <mat-icon *ngIf="isFilterSelected('Avaliação', option)" class="tiny-icon">star</mat-icon>
+            {{ option }}
+          </mat-chip>
+        </mat-chip-set>
+      </div>
+    </div>
+
+    <!-- Filtros expandidos -->
+    <div class="filters-expanded" *ngIf="showAllFilters">
+      <div class="filter-expanded-content">
+        <div class="filter-section price-filter">
+          <h3>Faixa de Preço</h3>
+          <div class="price-range-inputs">
+            <mat-form-field appearance="outline">
+              <mat-label>Mínimo</mat-label>
+              <span matPrefix>R$ </span>
+              <input matInput type="number" [(ngModel)]="minPrice" (input)="applyFilters()">
+            </mat-form-field>
+            <span class="price-separator">-</span>
+            <mat-form-field appearance="outline">
+              <mat-label>Máximo</mat-label>
+              <span matPrefix>R$ </span>
+              <input matInput type="number" [(ngModel)]="maxPrice" (input)="applyFilters()">
             </mat-form-field>
           </div>
-
-          <div class="filters">
-            <mat-expansion-panel class="filter-panel">
-              <mat-expansion-panel-header>
-                <mat-panel-title>
-                  <mat-icon>filter_list</mat-icon>
-                  Filtros
-                </mat-panel-title>
-              </mat-expansion-panel-header>
-
-              <div class="filter-container">
-                <div class="filter-group price-filter">
-                  <h4>Preço</h4>
-                  <div class="price-inputs">
-                    <mat-form-field appearance="outline">
-                      <mat-label>Mínimo</mat-label>
-                      <input matInput type="number" [(ngModel)]="minPrice">
-                    </mat-form-field>
-
-                    <mat-form-field appearance="outline">
-                      <mat-label>Máximo</mat-label>
-                      <input matInput type="number" [(ngModel)]="maxPrice">
-                    </mat-form-field>
-                  </div>
-                </div>
-
-                <div *ngFor="let filter of filters" class="filter-group">
-                  <h4>{{ filter.nome }}</h4>
-                  <div class="filter-options">
-                    <div class="filter-option" *ngFor="let option of filter.opcoes">
-                      <mat-checkbox [checked]="isFilterSelected(filter.nome, option)" (change)="toggleFilter(filter.nome, option)">
-                        {{ option }}
-                      </mat-checkbox>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="filter-actions">
-                  <button mat-raised-button color="primary" (click)="applyFilters()">Aplicar Filtros</button>
-                </div>
-              </div>
-            </mat-expansion-panel>
-          </div>
         </div>
-      </aside>
 
-      <!-- Cards Responsivos -->
-      <div class="services-container">
-        <div class="services-grid">
-          @if(filteredServices.length > 0) {
-            <mat-card *ngFor="let service of filteredServices" class="service-card">
-              <div class="card-content-wrapper">
-                <div class="img-container">
-                  <img [src]="service.fotoColaborador" [alt]="service.titulo" class="service-image">
-                </div>
-                <mat-card-content>
-                  <div class="freelancer-info">
-                    <span class="freelancer-name">{{service.nomeColaborador}}</span>
-                    <div class="rating">
-                      <mat-icon class="star-icon">star</mat-icon>
-                      <span>{{service.avaliacao}} ({{service.totalAvaliacoes}})</span>
-                    </div>
-                  </div>
-
-                  <div class="content-main">
-                    <h2 class="service-title">{{service.titulo}}</h2>
-                    <p class="service-description">{{service.descricao | slice:0:200}}{{service.descricao.length > 200 ? '...' : ''}}</p>
-                  </div>
-
-                  <div class="content-details">
-                    <div class="tags-container">
-                      <mat-chip-listbox>
-                        <mat-chip-option *ngFor="let tag of service.tags.slice(0, 3)" disabled>
-                          {{tag}}
-                        </mat-chip-option>
-                      </mat-chip-listbox>
-                    </div>
-
-                    <div class="service-details">
-                      <div class="detail">
-                        <mat-icon class="detail-icon">schedule</mat-icon>
-                        <span>{{service.tempoEntrega}} dias</span>
-                      </div>
-                      <div class="detail">
-                        <mat-icon class="detail-icon">workspace_premium</mat-icon>
-                        <span>{{service.nivel}}</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div class="service-footer">
-                    <span class="price">R$ {{service.preco}}</span>
-                    <button mat-raised-button color="primary" (click)="openServiceDetails(service)">
-                      Ver Detalhes
-                    </button>
-                  </div>
-                </mat-card-content>
-              </div>
-            </mat-card>
-          } @else {
-            <div class="no-results">
-              <mat-icon>search_off</mat-icon>
-              <p>Nenhum serviço encontrado com os filtros selecionados</p>
+        <div class="filter-column" *ngFor="let filter of filters">
+          <div class="filter-section">
+            <h3>{{ filter.nome }}</h3>
+            <div class="filter-options">
+              <mat-chip-set class="stacked-filter-chips">                <mat-chip 
+                  *ngFor="let option of filter.opcoes"
+                  [class.selected]="isFilterSelected(filter.nome, option)"
+                  (click)="toggleFilter(filter.nome, option)"
+                  (keydown.enter)="toggleFilter(filter.nome, option)"
+                  (keydown.space)="toggleFilter(filter.nome, option)"
+                  tabindex="0"
+                  role="button"
+                  [attr.aria-pressed]="isFilterSelected(filter.nome, option)">
+                  <mat-icon *ngIf="isFilterSelected(filter.nome, option)" class="tiny-icon">check</mat-icon>
+                  {{ option }}
+                </mat-chip>
+              </mat-chip-set>
             </div>
-          }
+          </div>
         </div>
       </div>
     </div>
   </div>
-</app-card>
+
+  <!-- Resultados em formato Masonry Grid -->
+  <div class="results-summary" *ngIf="filteredServices.length > 0">
+    <p>{{ filteredServices.length }} serviços encontrados</p>
+  </div>
+
+  <!-- Grid de Serviços -->
+  <div class="masonry-grid-container">
+    <div class="masonry-grid" *ngIf="filteredServices.length > 0">      <div class="masonry-grid-item" *ngFor="let service of filteredServices; let i = index" [attr.data-index]="i">
+        <div class="service-card" 
+             (click)="openServiceDetails(service)" 
+             (keydown.enter)="openServiceDetails(service)"
+             (keydown.space)="openServiceDetails(service)"
+             tabindex="0"
+             role="button"
+             [attr.aria-label]="'Ver detalhes de ' + service.titulo">
+          <div class="card-image-container">
+            <img [src]="service.fotoColaborador" [alt]="service.titulo" class="service-image">
+            <div class="card-overlay">
+              <div class="rating-badge">
+                <mat-icon>star</mat-icon>
+                <span>{{ service.avaliacao }}</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="card-content">
+            <div class="card-meta">
+              <span class="service-level">{{ service.nivel }}</span>
+              <span class="delivery-time">{{ service.tempoEntrega }} dias</span>
+            </div>
+            
+            <h3 class="service-title">{{ service.titulo }}</h3>
+            
+            <div class="service-tags">
+              <span class="tag" *ngFor="let tag of service.tags.slice(0, 2)">{{ tag }}</span>
+            </div>
+            
+            <div class="card-footer">
+              <div class="provider-info">
+                <span class="provider-name">{{ service.nomeColaborador }}</span>
+              </div>
+              <div class="price-tag">
+                <span>R$ {{ service.preco }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Nenhum resultado -->
+    <div class="no-results" *ngIf="filteredServices.length === 0">
+      <mat-icon>search_off</mat-icon>
+      <h3>Nenhum serviço encontrado</h3>
+      <p>Tente ajustar seus filtros para ver mais opções</p>
+      <button mat-stroked-button color="primary" (click)="resetFilters()">Limpar Filtros</button>
+    </div>
+  </div>
+</div>

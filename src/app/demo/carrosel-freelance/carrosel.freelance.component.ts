@@ -9,8 +9,10 @@ import { MatBadgeModule } from '@angular/material/badge';
 import { Router } from '@angular/router';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { Colaborador } from 'src/app/core/interfaces/colaborador';
+import { Servico } from 'src/app/core/interfaces/servico';
 import { TruncatePipe } from './trincate.pipe';
 import { trigger, transition, style, animate, state } from '@angular/animations';
+import { ServiceDetailsComponent } from '../catalogo-servicos/service-details/service-details.component';
 
 @Component({
   selector: 'app-freelancer-carousel',
@@ -60,7 +62,7 @@ export class FreelancerCarouselComponent implements OnInit, AfterViewInit {
   isAnimating = false;
   touchStartX = 0;
   touchEndX = 0;
-  autoplayInterval: any = null;
+  autoplayInterval = null;
   currentPage = 0;
 
   freelancers: Colaborador[] = [
@@ -346,12 +348,51 @@ export class FreelancerCarouselComponent implements OnInit, AfterViewInit {
       this.prevSlide();
     }
   }
-  
-  viewProfile(profile: Colaborador) {
-    this.router.navigate(['/freelancer', profile.id]);
+    viewProfile(profile: Colaborador) {
+    // Converte Colaborador para Servico antes de abrir o dialog
+    const servicoData: Servico = {
+      id: profile.id,
+      titulo: profile.titulo,
+      descricao: profile.descricao,
+      preco: profile.valorHora,
+      categoria: profile.categoria,
+      subcategoria: profile.subcategoria,
+      avaliacao: profile.avaliacao,
+      totalAvaliacoes: profile.totalAvaliacoes || 0,
+      colaboradorId: profile.id,
+      nomeColaborador: profile.nome,
+      fotoColaborador: profile.fotoPerfil,
+      tempoEntrega: profile.tempoEntrega || 3,
+      disponibilidade: profile.disponibilidade,
+      nivel: profile.nivel
+    };
+    
+    this.dialog.open(ServiceDetailsComponent, {
+      data: servicoData
+    });
   }
 
   hireFreelancer(profile: Colaborador) {
-    this.router.navigate(['/contratar', profile.id]);
+    // Converte Colaborador para Servico antes de navegar para a página de contrato
+    const servicoData: Servico = {
+      id: profile.id,
+      titulo: profile.titulo,
+      descricao: profile.descricao,
+      preco: profile.valorHora,
+      categoria: profile.categoria,
+      subcategoria: profile.subcategoria,
+      avaliacao: profile.avaliacao,
+      totalAvaliacoes: profile.totalAvaliacoes || 0,
+      colaboradorId: profile.id,
+      nomeColaborador: profile.nome,
+      fotoColaborador: profile.fotoPerfil,
+      tempoEntrega: profile.tempoEntrega || 3,
+      disponibilidade: profile.disponibilidade,
+      nivel: profile.nivel
+    };
+    
+    this.router.navigate(['/contrato', profile.id], {
+      state: { serviceData: servicoData }
+    });
   }
 }

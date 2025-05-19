@@ -84,18 +84,20 @@ $shadow-color: rgba(0, 0, 0, 0.1);
 // Layout principal em duas colunas
 .service-content-wrapper {
   display: grid;
-  grid-template-columns: 1fr 280px; // Sidebar mais compacta
-  gap: 12px; // Reduzido
-  padding: 12px; // Reduzido
+  grid-template-columns: 1fr 260px; // Sidebar mais compacta
+  gap: 10px; // Reduzido ainda mais
+  padding: 10px; // Reduzido ainda mais
   position: relative;
-  max-height: calc(100vh - 180px); // Altura calculada para evitar vazamento
-  overflow-y: auto; // Permite rolagem independente
+  flex: 1;
+  overflow: hidden; // Evita rolagem dupla
+  height: calc(100vh - 150px - 60px); // Altura do container menos hero menos navbar
   
   @media (max-width: 992px) {
     grid-template-columns: 1fr;
-    padding: 10px; // Reduzido
-    gap: 10px; // Reduzido
-    max-height: none; // Em telas menores, permitimos a rolagem natural da página
+    padding: 8px; // Reduzido ainda mais
+    gap: 8px; // Reduzido ainda mais
+    height: auto;
+    overflow-y: auto; // Em telas menores, permitimos a rolagem natural
   }
 }
 
@@ -428,83 +430,41 @@ $shadow-color: rgba(0, 0, 0, 0.1);
       margin-bottom: 12px; // Reduzido
     }
     
-    .similar-services-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-      gap: 10px;
-      
-      @media (max-width: 768px) {
-        grid-template-columns: repeat(2, 1fr); // 2 colunas em telas menores
-      }
-      
-      @media (max-width: 480px) {
-        grid-template-columns: repeat(2, 1fr); // Mantém 2 colunas em telas muito pequenas
-      }
-    }
-    
     .similar-service-item {
       display: flex;
-      flex-direction: column;
-      border: 1px solid $border-color;
-      border-radius: 8px;
-      padding: 8px;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      margin-bottom: 12px; // Reduzido
+      padding-bottom: 12px; // Reduzido
+      border-bottom: 1px solid $border-color;
       
-      &:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      &:last-child {
+        margin-bottom: 0;
+        padding-bottom: 0;
+        border-bottom: none;
       }
       
-      .similar-service-header {
-        display: flex;
-        align-items: center;
-        margin-bottom: 8px;
-      }
-      
-      .similar-service-avatar {
-        width: 32px !important;
-        height: 32px !important;
-        border-radius: 50% !important;
-        object-fit: cover !important;
-        margin-right: 8px;
-        border: 1px solid $border-color;
-        flex-shrink: 0;
-        display: block;
-        background: #f3f3f3;
+      img {
+        width: 50px; // Reduzido
+        height: 50px; // Reduzido
+        border-radius: 6px; // Reduzido
+        object-fit: cover;
+        margin-right: 10px; // Reduzido
       }
       
       .similar-service-info {
         flex: 1;
-        display: flex;
-        flex-direction: column;
-        min-width: 0; // Para permitir que o texto seja truncado
         
         h4 {
-          margin: 0 0 2px 0;
-          font-size: 0.9rem;
+          margin: 0 0 3px 0; // Reduzido
+          font-size: 0.9rem; // Reduzido
           font-weight: 500;
-          // Limita o título a 1 linha com elipse
-          display: -webkit-box;
-          -webkit-line-clamp: 1;
-          line-clamp: 1; // Propriedade padrão para compatibilidade
-          -webkit-box-orient: vertical;
-          overflow: hidden;
-          text-overflow: ellipsis;
-          white-space: nowrap;
         }
         
         .similar-service-price {
           color: $primary-color;
           font-weight: 600;
-          font-size: 0.85rem;
+          margin-bottom: 6px; // Reduzido
+          font-size: 0.85rem; // Reduzido
         }
-      }
-      
-      button {
-        width: 100%;
-        margin-top: 4px;
-        padding: 0;
-        min-height: 30px;
       }
     }
   }
@@ -539,3 +499,4 @@ $shadow-color: rgba(0, 0, 0, 0.1);
     animation: none !important;
   }
 }
+

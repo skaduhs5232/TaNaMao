@@ -34,6 +34,7 @@
     "@popperjs/core": "2.11.8",
     "@tailwindcss/vite": "^4.0.4",
     "@types/leaflet": "^1.9.16",
+    "animate.css": "^4.1.1",
     "apexcharts": "^4.4.0",
     "bootstrap": "5.3.3",
     "leaflet": "^1.9.4",

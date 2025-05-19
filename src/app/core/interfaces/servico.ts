@@ -14,8 +14,6 @@ export interface Servico {
   tempoEntrega?: number;
   disponibilidade?: string;
   nivel?: string;
-  
-  // Adicionando as propriedades que estão causando erros
   certificacoes?: string[];
   portfolioItems?: PortifolioItem[];
 }

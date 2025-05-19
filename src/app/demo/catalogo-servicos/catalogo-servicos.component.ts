@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit, HostListener } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -9,19 +9,19 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
-import { MatCheckboxModule } from '@angular/material/checkbox'; // Adicionado
-import { CardComponent } from 'src/app/theme/shared/components/card/card.component';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatSliderModule } from '@angular/material/slider';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { ServiceDetailsComponent } from './service-details/service-details.component';
 import { Servico, Filtro } from 'src/app/core/interfaces/padroes';
+import { trigger, transition, style, animate, query, stagger } from '@angular/animations';
 
 @Component({
   selector: 'app-freelancer-catalog',
   templateUrl: './catalogo-servicos.component.html',
   styleUrls: ['./catalogo-servicos.component.scss'],
-  standalone: true,
-  imports: [
+  standalone: true,  imports: [
     CommonModule,
     MatCardModule,
     MatChipsModule,
@@ -32,17 +32,32 @@ import { Servico, Filtro } from 'src/app/core/interfaces/padroes';
     MatExpansionModule,
     FormsModule,
     MatSelectModule,
-    CardComponent,
     MatDialogModule,
-    MatCheckboxModule // Adicionado
+    MatCheckboxModule,
+    MatSliderModule
+  ],
+  animations: [
+    trigger('fadeAnimation', [
+      transition('* => *', [
+        query(':enter', [
+          style({ opacity: 0, transform: 'translateY(10px)' }),
+          stagger(50, [
+            animate('300ms ease-out', style({ opacity: 1, transform: 'translateY(0)' }))
+          ])
+        ], { optional: true })
+      ])
+    ])
   ]
 })
-export class ServicesComponent implements OnInit {
+export class ServicesComponent implements OnInit, AfterViewInit {
   selectedCategory = '';
   searchQuery = '';
   minPrice?: number;
   maxPrice?: number;
   selectedFilters: Record<string, string[]> = {};
+  showAllFilters = false;
+  isFilterCollapsed = false;
+  loadedServices = false;
 
   filters: Filtro[] = [
     {
@@ -558,7 +573,6 @@ export class ServicesComponent implements OnInit {
   filteredServices: Servico[] = [];
 
   constructor(private route: ActivatedRoute, private dialog: MatDialog) { }
-
   ngOnInit(): void {
     this.route.paramMap.subscribe(params => {
       const category = params.get('category');
@@ -567,21 +581,72 @@ export class ServicesComponent implements OnInit {
         this.filteredServices = this.services.filter(
           service => service.categoria === this.selectedCategory
         );
+        
+        // Simular um pequeno atraso para mostrar a animação de carregamento
+        setTimeout(() => {
+          this.loadedServices = true;
+        }, 300);
       }
     });
   }
 
-  isFilterCollapsed = false;
+  ngAfterViewInit(): void {
+    // Ajusta o layout masonry após a renderização dos items
+    setTimeout(() => {
+      this.adjustMasonryLayout();
+    }, 500);
+  }
 
+  @HostListener('window:resize')
+  onResize(): void {
+    this.adjustMasonryLayout();
+  }
 
   private formatCategoryName(category: string): string {
     return category.charAt(0).toUpperCase() + category.slice(1).replace(/-/g, ' ');
   }
-
+  
+  // Método para controlar a exibição dos filtros expandidos
+  toggleShowAllFilters(): void {
+    this.showAllFilters = !this.showAllFilters;
+  }
+    // Método para ajustar o layout tipo masonry (tijolos)
+  private adjustMasonryLayout(): void {
+    // Isso seria implementado com JavaScript para ajustar a altura dos cards
+    // em um layout tipo masonry real
+    const items = document.querySelectorAll('.masonry-grid-item');
+    if (items.length === 0) return;
+    
+    // Implementação básica para um efeito visual
+    const getRandomOffset = () => {
+      return Math.floor(Math.random() * 3) * 10; // Valores aleatórios: 0, 10, ou 20px
+    };
+    
+    items.forEach((item, index) => {
+      if (window.innerWidth >= 768) { // Apenas em telas maiores
+        const offset = index % 2 === 0 ? getRandomOffset() : 0;
+        (item as HTMLElement).style.marginTop = `${offset}px`;
+      } else {
+        (item as HTMLElement).style.marginTop = '0';
+      }
+    });
+  }
+  
+  // Método para limpar todos os filtros
+  resetFilters(): void {
+    this.searchQuery = '';
+    this.minPrice = undefined;
+    this.maxPrice = undefined;
+    this.selectedFilters = {};
+    this.applyFilters();
+  }
   applyFilters(): void {
+    // Reset a visualização dos serviços filtrados
+    this.loadedServices = false;
+    
     this.filteredServices = this.services.filter(service => {
       // Filtro por categoria
-      if (service.categoria !== this.selectedCategory) {
+      if (this.selectedCategory && service.categoria !== this.selectedCategory) {
         return false;
       }
 
@@ -591,7 +656,8 @@ export class ServicesComponent implements OnInit {
         const matchesSearch =
           service.titulo.toLowerCase().includes(searchLower) ||
           service.descricao.toLowerCase().includes(searchLower) ||
-          service.tags.some(tag => tag.toLowerCase().includes(searchLower));
+          service.tags.some(tag => tag.toLowerCase().includes(searchLower)) ||
+          service.nomeColaborador.toLowerCase().includes(searchLower);
 
         if (!matchesSearch) return false;
       }
@@ -631,8 +697,17 @@ export class ServicesComponent implements OnInit {
 
       return true;
     });
+    
+    // Simula um pequeno atraso para exibir a animação de carregamento
+    setTimeout(() => {
+      this.loadedServices = true;
+      
+      // Ajusta o layout após carregar os itens filtrados
+      setTimeout(() => {
+        this.adjustMasonryLayout();
+      }, 200);
+    }, 300);
   }
-
   toggleFilter(filterName: string, option: string): void {
     if (!this.selectedFilters[filterName]) {
       this.selectedFilters[filterName] = [];
@@ -645,6 +720,7 @@ export class ServicesComponent implements OnInit {
       this.selectedFilters[filterName].splice(index, 1);
     }
 
+    // Aplica os filtros automaticamente após cada toggle
     this.applyFilters();
   }
 

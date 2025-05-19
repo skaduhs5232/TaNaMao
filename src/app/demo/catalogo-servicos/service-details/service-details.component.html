@@ -1,72 +1,199 @@
 <div class="service-details-container" [class.sidebar-open]="sidebarOpen" [class.sidebar-closed]="sidebarClosed">
-  <mat-card class="service-card">
-    <mat-card-header>
-      <img mat-card-avatar [src]="data.fotoColaborador" [alt]="data.nomeColaborador">
-      <mat-card-title>{{ data.nomeColaborador }}</mat-card-title>
-      <mat-card-subtitle>{{ data.categoria }}</mat-card-subtitle>
-    </mat-card-header>
-
-    <mat-card-content>
-      <h2 class="service-title">{{ data.titulo }}</h2>
-
-      <div class="info-grid">
-        <div class="info-item">
-          <mat-icon class="info-icon">attach_money</mat-icon>
-          <div>
-            <div class="label">Preço</div>
-            <div class="value">R$ {{ data.preco }}</div>
-          </div>
-        </div>
-
-        <div class="info-item">
-          <mat-icon class="info-icon">star_rate</mat-icon>
-          <div>
-            <div class="label">Avaliação</div>
-            <div class="value">{{ data.avaliacao }} ({{ data.totalAvaliacoes }})</div>
-          </div>
-        </div>
-
-        <div class="info-item">
-          <mat-icon class="info-icon">schedule</mat-icon>
-          <div>
-            <div class="label">Tempo de Entrega</div>
-            <div class="value">{{ data.tempoEntrega }} dias</div>
-          </div>
-        </div>
-
-        <div class="info-item">
-          <mat-icon class="info-icon">trending_up</mat-icon>
-          <div>
-            <div class="label">Nível</div>
-            <div class="value">{{ data.nivel }}</div>
-          </div>
-        </div>
+  <div class="service-hero">
+    <div
+      class="service-header"
+      [style.background-image]="'linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.7)), url(https://picsum.photos/800/600?random=1)'"
+    >
+      <div class="service-title-container">
+        <h1 class="service-title animate__animated animate__fadeIn">{{ data.titulo }}</h1>
+        <div class="service-category animate__animated animate__fadeIn">{{ data.categoria }}</div>
       </div>
+    </div>
+  </div>
 
-      <mat-divider class="divider"></mat-divider>
+  <div class="service-content-wrapper">
+    <div class="service-main-content">
+      <mat-card class="service-card main-info-card animate__animated animate__fadeInUp" appearance="outlined">
+        <div class="service-highlights">
+          <div class="highlight-item" matTooltip="Preço do serviço" matTooltipPosition="above">
+            <div class="highlight-icon-wrapper price">
+              <mat-icon>paid</mat-icon>
+            </div>
+            <div class="highlight-value">R$ {{ data.preco }}</div>
+            <div class="highlight-label">Preço</div>
+          </div>
 
-      <div class="description-section">
-        <h3>Descrição</h3>
-        <p>{{ data.descricao }}</p>
-      </div>
+          <div class="highlight-item" matTooltip="Avaliação média de clientes" matTooltipPosition="above">
+            <div class="highlight-icon-wrapper rating">
+              <mat-icon>star</mat-icon>
+            </div>
+            <div class="highlight-value">
+              <div class="stars-container">
+                <ng-container *ngFor="let star of [1, 2, 3, 4, 5]">
+                  <mat-icon class="star-icon" [class.filled]="star <= data.avaliacao">
+                    {{ star <= data.avaliacao ? 'star' : star <= data.avaliacao + 0.5 ? 'star_half' : 'star_border' }}
+                  </mat-icon>
+                </ng-container>
+              </div>
+              {{ data.avaliacao }} ({{ data.totalAvaliacoes }})
+            </div>
+            <div class="highlight-label">Avaliação</div>
+          </div>
 
-      <mat-divider class="divider"></mat-divider>
+          <div class="highlight-item" matTooltip="Tempo estimado para entrega" matTooltipPosition="above">
+            <div class="highlight-icon-wrapper delivery">
+              <mat-icon>schedule</mat-icon>
+            </div>
+            <div class="highlight-value">{{ data.tempoEntrega }} dias</div>
+            <div class="highlight-label">Tempo de Entrega</div>
+          </div>
 
-      <div class="tags-section">
-        <h3>Especialidades</h3>
-        <div class="tags-container">
-          <span *ngFor="let tag of data.tags" class="tag-chip">
-            {{ tag }}
-          </span>
+          <div class="highlight-item" matTooltip="Nível de complexidade" matTooltipPosition="above">
+            <div class="highlight-icon-wrapper level">
+              <mat-icon>trending_up</mat-icon>
+            </div>
+            <div class="highlight-value">{{ data.nivel }}</div>
+            <div class="highlight-label">Nível</div>
+          </div>
         </div>
-      </div>
-    </mat-card-content>
 
-    <mat-card-actions align="end">
-      <button mat-raised-button color="primary" (click)="navigateToComprarServico()" class="compare-button">
-        <mat-icon>compare_arrows</mat-icon>
-        Contratar Serviço
-      </button>
-    </mat-card-actions>
-  </mat-card>
+        <mat-tab-group mat-stretch-tabs="false" mat-align-tabs="start" animationDuration="300ms" class="service-tabs">
+          <mat-tab>
+            <ng-template mat-tab-label>
+              <mat-icon class="tab-icon">description</mat-icon>
+              Descrição
+            </ng-template>
+            <div class="tab-content">
+              <p class="service-description">{{ data.descricao }}</p>
+            </div>
+          </mat-tab>
+
+          <mat-tab>
+            <ng-template mat-tab-label>
+              <mat-icon class="tab-icon">local_offer</mat-icon>
+              Especialidades
+            </ng-template>
+            <div class="tab-content">
+              <div class="tags-container">
+                <mat-chip-set>
+                  <mat-chip *ngFor="let tag of data.tags" class="tag-chip animate__animated animate__fadeIn">
+                    <mat-icon matChipAvatar>tag</mat-icon>
+                    {{ tag }}
+                  </mat-chip>
+                </mat-chip-set>
+              </div>
+            </div>
+          </mat-tab>
+
+          <mat-tab>
+            <ng-template mat-tab-label>
+              <mat-icon class="tab-icon">reviews</mat-icon>
+              Avaliações
+            </ng-template>
+            <div class="tab-content">
+              <div class="no-reviews">
+                <mat-icon>sentiment_neutral</mat-icon>
+                <p>Ainda não há avaliações para este serviço.</p>
+              </div>
+            </div>
+          </mat-tab>
+        </mat-tab-group>
+      </mat-card>
+      <mat-card
+        class="service-card similar-services-card animate__animated animate__fadeInRight"
+        appearance="outlined"
+        *ngIf="servicosSimilares?.length"
+      >
+        <mat-card-header>
+          <mat-card-title>Serviços Similares</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="similar-services-grid d-flex" style="gap: 73px">
+            <div class="similar-service-item"  *ngFor="let servico of servicosSimilares">
+              <div class="similar-service-header">
+                <img class="similar-service-avatar" src="../../../../assets/images/logo-handshake.png" alt="{{ servico.titulo }}" />
+                <div class="similar-service-info">
+                  <h4>{{ servico.titulo }}</h4>
+                  <div class="similar-service-price">R$ {{ servico.preco }}</div>
+                </div>
+              </div>
+              <button mat-button color="primary" (click)="navigateToService(servico.id)">Ver detalhes</button>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <div class="service-sidebar">
+      <mat-card class="service-card provider-card animate__animated animate__fadeInRight" appearance="outlined">
+        <div class="provider-header">
+          <div class="provider-avatar-wrapper">
+            <img class="provider-avatar" [src]="data.fotoColaborador" [alt]="data.nomeColaborador" />
+          </div>
+          <div class="provider-info">
+            <h2 class="provider-name">{{ data.nomeColaborador }}</h2>
+            <div class="provider-level">
+              <mat-icon class="level-icon">verified</mat-icon>
+              Profissional verificado
+            </div>
+          </div>
+        </div>
+
+        <mat-divider></mat-divider>
+
+        <div class="provider-stats">
+          <div class="stat-item">
+            <mat-icon>work</mat-icon>
+            <span>Projetos realizados: {{ data.portfolioItems?.length || 0 }}</span>
+          </div>
+          <div class="stat-item">
+            <mat-icon>person</mat-icon>
+            <span>Membro desde 2023</span>
+          </div>
+          <div class="stat-item">
+            <mat-icon>schedule</mat-icon>
+            <span>Rápido tempo de resposta</span>
+          </div>
+        </div>
+
+        <div class="cta-container">
+          <button mat-flat-button color="primary" class="cta-button" (click)="navigateToComprarServico()">
+            <mat-icon>handshake</mat-icon>
+            Contratar Serviço
+          </button>
+
+          <button mat-stroked-button color="accent" class="contact-button" (click)="contactProvider()">
+            <mat-icon>chat</mat-icon>
+            Conversar
+          </button>
+        </div>
+
+        <mat-divider></mat-divider>
+
+        <div class="guarantees">
+          <div class="guarantee-item">
+            <mat-icon>verified_user</mat-icon>
+            <span>Garantia TáNaMão</span>
+          </div>
+          <div class="guarantee-item">
+            <mat-icon>payments</mat-icon>
+            <span>Pagamento Seguro</span>
+          </div>
+          <div class="guarantee-item">
+            <mat-icon>support_agent</mat-icon>
+            <span>Suporte 24/7</span>
+          </div>
+        </div>
+      </mat-card>
+    </div>
+  </div>
+
+  <div class="floating-action-buttons">
+    <button mat-fab color="accent" class="fab-button" matTooltip="Adicionar aos favoritos" (click)="toggleFavorite()">
+      <mat-icon>{{ isFavorite ? 'favorite' : 'favorite_border' }}</mat-icon>
+    </button>
+    <button mat-fab color="primary" class="fab-button" matTooltip="Compartilhar serviço" (click)="shareService()">
+      <mat-icon>share</mat-icon>
+    </button>
+  </div>
 </div>
